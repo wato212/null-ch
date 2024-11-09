@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>null ch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .post {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        .post:last-child {
+            border-bottom: none;
+        }
+        .post .name {
+            font-weight: bold;
+        }
+        .post .message {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>null ch</h2>
+    <form id="postForm">
+        <label for="name">名前:</label>
+        <input type="text" id="name" placeholder="名無し"><br><br>
+
+        <label for="message">メッセージ:</label><br>
+        <textarea id="message" rows="4" cols="50" placeholder="ここにメッセージを入力してください"></textarea><br><br>
+
+        <button type="button" onclick="postMessage()">送信</button>
+    </form>
+
+    <h3>投稿一覧</h3>
+    <div id="posts">
+        <!-- 投稿がここに表示されます -->
+    </div>
+</div>
+
+<script>
+    // ページ読み込み時にローカルストレージから投稿を読み込む
+    document.addEventListener("DOMContentLoaded", () => {
+        const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
+        const posts = document.getElementById("posts");
+
+        // 投稿を表示
+        savedPosts.forEach(post => {
+            const postContainer = document.createElement("div");
+            postContainer.classList.add("post");
+
+            const nameElement = document.createElement("div");
+            nameElement.classList.add("name");
+            nameElement.textContent = post.name;
+
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("message");
+            messageElement.textContent = post.message;
+
+            postContainer.appendChild(nameElement);
+            postContainer.appendChild(messageElement);
+            posts.appendChild(postContainer);
+        });
+    });
+
+    function postMessage() {
+        const name = document.getElementById("name").value || "匿名";
+        const message = document.getElementById("message").value;
+
+        if (message.trim() === "") {
+            alert("メッセージを入力してください。");
+            return;
+        }
+
+        const post = { name, message };
+
+        // ローカルストレージに保存
+        const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
+        savedPosts.unshift(post); // 新しい投稿を先頭に追加
+        localStorage.setItem("posts", JSON.stringify(savedPosts));
+
+        // 投稿を画面に表示
+        const postContainer = document.createElement("div");
+        postContainer.classList.add("post");
+
+        const nameElement = document.createElement("div");
+        nameElement.classList.add("name");
+        nameElement.textContent = name;
+
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("message");
+        messageElement.textContent = message;
+
+        postContainer.appendChild(nameElement);
+        postContainer.appendChild(messageElement);
+
+        const posts = document.getElementById("posts");
+        posts.insertBefore(postContainer, posts.firstChild);
+
+        document.getElementById("postForm").reset();
+    }
+</script>
+
+</body>
+</html>
