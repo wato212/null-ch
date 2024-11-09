@@ -27,9 +27,15 @@
         }
         .post .name {
             font-weight: bold;
+            color: green; /* 名前を緑色に設定 */
         }
         .post .message {
             margin: 5px 0;
+        }
+        .post .timestamp {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -39,7 +45,7 @@
     <h2>null ch</h2>
     <form id="postForm">
         <label for="name">名前:</label>
-        <input type="text" id="name" placeholder="名無し"><br><br>
+        <input type="text" id="name" placeholder="匿名"><br><br>
 
         <label for="message">メッセージ:</label><br>
         <textarea id="message" rows="4" cols="50" placeholder="ここにメッセージを入力してください"></textarea><br><br>
@@ -72,14 +78,19 @@
             messageElement.classList.add("message");
             messageElement.textContent = post.message;
 
+            const timestampElement = document.createElement("div");
+            timestampElement.classList.add("timestamp");
+            timestampElement.textContent = post.timestamp;
+
             postContainer.appendChild(nameElement);
             postContainer.appendChild(messageElement);
+            postContainer.appendChild(timestampElement);
             posts.appendChild(postContainer);
         });
     });
 
     function postMessage() {
-        const name = document.getElementById("name").value || "匿名";
+        const name = document.getElementById("name").value || "名無し";
         const message = document.getElementById("message").value;
 
         if (message.trim() === "") {
@@ -87,7 +98,10 @@
             return;
         }
 
-        const post = { name, message };
+        // 現在時刻を取得してフォーマット
+        const timestamp = new Date().toLocaleString();
+
+        const post = { name, message, timestamp };
 
         // ローカルストレージに保存
         const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
@@ -106,8 +120,13 @@
         messageElement.classList.add("message");
         messageElement.textContent = message;
 
+        const timestampElement = document.createElement("div");
+        timestampElement.classList.add("timestamp");
+        timestampElement.textContent = timestamp;
+
         postContainer.appendChild(nameElement);
         postContainer.appendChild(messageElement);
+        postContainer.appendChild(timestampElement);
 
         const posts = document.getElementById("posts");
         posts.insertBefore(postContainer, posts.firstChild);
